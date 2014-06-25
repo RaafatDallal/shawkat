@@ -48,10 +48,10 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-$db['default']['hostname'] = 'localhost';
-$db['default']['username'] = 'root';
-$db['default']['password'] = '';
-$db['default']['database'] = 'shawkatr';
+$db['default']['hostname'] = '198.38.82.200';
+$db['default']['username'] = 'asaadkaa_eco';
+$db['default']['password'] = 'ecobuild';
+$db['default']['database'] = 'asaadkaa_restaurant';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;

@@ -4,14 +4,14 @@ class Reservation_service extends CI_Controller {
 	
 	
 	
-	function Reservation_service()
+	function __construct()
     {
           parent::__construct();
-          $ns = 'http://'.$_SERVER['HTTP_HOST'].'/index.php/soapserver/';
+           $this->ns = 'http://'.$_SERVER['HTTP_HOST'].'/index.php/soapserver/';
           $this->load->library("Nusoap_library"); // load nusoap toolkit library in controller
           $this->nusoap_server = new soap_server(); // create soap server object
-          $this->nusoap_server->configureWSDL("SOAP Server Using NuSOAP in CodeIgniter", $ns); // wsdl cinfiguration
-          $this->nusoap_server->wsdl->schemaTargetNamespace = $ns; // server namespace
+          $this->nusoap_server->configureWSDL("SOAP Server Using NuSOAP in CodeIgniter",  $this->ns); // wsdl cinfiguration
+          $this->nusoap_server->wsdl->schemaTargetNamespace =  $this->ns; // server namespace
     }
 	
 	
@@ -19,6 +19,9 @@ class Reservation_service extends CI_Controller {
 	
 	function index()
 	{
+		
+		
+		
 	
 		/**
 		 * function name : getAllReservations
@@ -35,19 +38,20 @@ class Reservation_service extends CI_Controller {
 		  */
 		function getAllReservations()
 		{
-			$this->load->model('reservation_model');
-			$data=$this->reservation_model->getAllReservation();
-			var_dump( $data);
-			echo json_encode($data);
+			//getting instance of the code igniter object
+			$CI =& get_instance();
+			$CI->load->model('reservation_model');
+			$data=$CI->reservation_model->getAllReservation();
+			return json_encode($data);
 		}
 		
 		$input_array = array (); //no input in this function
 		$return_array = array ("return" => "xsd:string");
-		$this->nusoap_server->register('getAllReservations', $input_array, $return_array, "urn:SOAPServerWSDL", "urn:".$ns."/getAllReservations", "rpc", "encoded", "Get all reservations");
+		$this->nusoap_server->register('getAllReservations', $input_array, $return_array, "urn:SOAPServerWSDL", "urn:". $this->ns."/getAllReservations", "rpc", "encoded", "Get all reservations");
 			
 		
 		
-		/**
+			/**
 		 * function name : getAllPendingReservations
 		 * 
 		 * Description : 
@@ -60,16 +64,19 @@ class Reservation_service extends CI_Controller {
 		 * contact : raafat.dallal@gmail.com
 		  * 
 		  */
+		  
 		function getAllPendingReservations()
 		{
-			$this->load->model('reservation_model');
-			$data=$this->reservation_model->getPendingReservation();
+			//getting instance of the code igniter object
+			$CI =& get_instance();
+			$CI->load->model('reservation_model');
+			$data=$CI->reservation_model->getPendingReservation();
 			echo json_encode($data);
 		}
 		
 		$input_array = array (); //no input in this function
 		$return_array = array ("return" => "xsd:string");
-		$this->nusoap_server->register('getAllPendingReservations', $input_array, $return_array, "urn:SOAPServerWSDL", "urn:".$ns."/getAllPendingReservations", "rpc", "encoded", "Get all pending reservations");
+		$this->nusoap_server->register('getAllPendingReservations', $input_array, $return_array, "urn:SOAPServerWSDL", "urn:". $this->ns."/getAllPendingReservations", "rpc", "encoded", "Get all pending reservations");
 			
 		
 		/**
@@ -87,16 +94,18 @@ class Reservation_service extends CI_Controller {
 		  */
 		function confirmReservation($id)
 		{
-			$this->load->model('reservation_model');  
-			$this->reservation_model->id=$id;
-			$this->reservation_model->status='CONFIRMED';
-			$this->reservation_model->modifyReservationStatus();
-			$this->getAllReservations();
+			//getting instance of the code igniter object
+			$CI =& get_instance();
+			$CI->load->model('reservation_model');  
+			$CI->reservation_model->id=$id;
+			$CI->reservation_model->status='CONFIRMED';
+			$CI->reservation_model->modifyReservationStatus();
+			return 'Reservation Confirmed';
 		}
 		
-		$input_array = array ('id' => "xsd:int"); //no input in this function
-		$return_array = array ();
-		$this->nusoap_server->register('confirmReservation', $input_array, $return_array, "urn:SOAPServerWSDL", "urn:".$ns."/confirmReservation", "rpc", "encoded", "Confirm reservation");
+		$input_array = array ('id' => "xsd:int");
+		$return_array = array ("return" => "xsd:string");
+		$this->nusoap_server->register('confirmReservation', $input_array, $return_array, "urn:SOAPServerWSDL", "urn:". $this->ns."/confirmReservation", "rpc", "encoded", "Confirm reservation");
 		
 		
 		/**
@@ -114,17 +123,19 @@ class Reservation_service extends CI_Controller {
 		  */
 		function cancelReservation($id)
 		{
-			$this->load->model('reservation_model');  
-			$this->reservation_model->id=$id;
-			$this->reservation_model->status='CANCELED';
-			$this->reservation_model->modifyReservationStatus();
-			$this->getAllReservations();
+			//getting instance of the code igniter object
+			$CI =& get_instance();
+			$CI->load->model('reservation_model');  
+			$CI->reservation_model->id=$id;
+			$CI->reservation_model->status='CANCELED';
+			$CI->reservation_model->modifyReservationStatus();
+			return 'Reservation Canceled';
 		}
 		
 		
-		$input_array = array ('id' => "xsd:int"); //no input in this function
-		$return_array = array ();
-		$this->nusoap_server->register('cancelReservation', $input_array, $return_array, "urn:SOAPServerWSDL", "urn:".$ns."/cancelReservation", "rpc", "encoded", "cancel reservation");
+		$input_array = array ('id' => "xsd:int"); 
+		$return_array = array ("return" => "xsd:string");
+		$this->nusoap_server->register('cancelReservation', $input_array, $return_array, "urn:SOAPServerWSDL", "urn:". $this->ns."/cancelReservation", "rpc", "encoded", "cancel reservation");
 		
 		
 		$this->nusoap_server->service(file_get_contents("php://input")); // read raw data from request body

@@ -154,14 +154,36 @@ class Reservation_model extends CI_Model{
 	 * contact : raafat.dallal@gmail.com
 	 */
 	 public function getAllReservation(){
-		$query = "SELECT *
-				  FROM reservation";
+		$query = "SELECT * 
+				  FROM reservation
+				  ORDER BY id DESC ";
 				  
 		$query = $this->db->query($query);
 		return $query->result_array();
 	 }
 	 
 	 /**
+	 * function name : getReservationById
+	 * 
+	 * Description : 
+	 * Returns the data of the given reservations ID in the database.
+	 * 
+	 * Created date : 07-06-2014
+	 * Modification date : ---
+	 * Modfication reason : ---
+	 * Author :Mohamad Raafat Dallal
+	 * contact : raafat.dallal@gmail.com
+	 */
+	 public function getReservationById(){
+		$query = "SELECT * 
+				  FROM reservation
+				  where id = {$this->id}";
+				  
+		$query = $this->db->query($query);
+		return $query->result_array();
+	 }
+	  
+	   /**
 	 * function name : getPendingReservation
 	 * 
 	 * Description : 
@@ -181,7 +203,7 @@ class Reservation_model extends CI_Model{
 		$query = $this->db->query($query);
 		return $query->result_array();
 	 }
-	  
+	 
 	 /**
 	 * function name : modifyReservationStatus
 	 * 
